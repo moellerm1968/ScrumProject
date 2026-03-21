@@ -1,0 +1,507 @@
+[
+  {
+    "id": "348ccc33-9736-474f-a45e-704239f4ca38",
+    "name": "Test3: 4 Gewiing",
+    "description": "zum 5 6 7 8 9 19 und 11 mal",
+    "directory": "Test3",
+    "workDir": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3",
+    "status": "new",
+    "createdAt": "2026-03-21T16:23:35.754Z",
+    "features": [
+      {
+        "id": "fbe86a89-3aee-48ba-b9e2-0ab7c9520839",
+        "name": "Passwort-Reset",
+        "description": "Nutzer sollen ihr vergessenes Passwort per E-Mail zurücksetzen",
+        "status": "new",
+        "createdAt": "2026-03-21T16:57:22.886Z",
+        "userStories": [
+          {
+            "id": "cc4c1f2e-631f-4eaa-80c5-6b74f8025394",
+            "storyNumber": "US-007",
+            "title": "Passwort zurücksetzen anfordern",
+            "asA": "registrierter Nutzer",
+            "iWant": "eine E-Mail zur Wiederherstellung meines Passworts anzufordern",
+            "soThat": "ich wieder Zugriff auf mein Konto bekomme",
+            "description": "Als registrierter Nutzer möchte ich eine E-Mail zur Wiederherstellung meines Passworts anzufordern, damit ich wieder Zugriff auf mein Konto bekomme.",
+            "acceptanceCriteria": [
+              "Der Nutzer kann seine registrierte E-Mail-Adresse im Formular eingeben.",
+              "Nach dem Absenden des Formulars erhält der Nutzer eine Bestätigung, dass die Anfrage erfolgreich war.",
+              "Der Nutzer bekommt innerhalb von 10 Minuten eine E-Mail mit einem Link zum Zurücksetzen des Passworts."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T16:57:29.821Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "0623a79a-d0bf-43fa-875b-bfbfb95a5d7e",
+            "storyNumber": "US-008",
+            "title": "Passwort zurücksetzen",
+            "asA": "Nutzer, der den E-Mail-Link verwendet",
+            "iWant": "mein Passwort über den bereitgestellten Link zurückzusetzen",
+            "soThat": "ich mich wieder in mein Konto einloggen kann",
+            "description": "Als Nutzer, der den E-Mail-Link verwendet möchte ich mein Passwort über den bereitgestellten Link zurückzusetzen, damit ich mich wieder in mein Konto einloggen kann.",
+            "acceptanceCriteria": [
+              "Der Link in der E-Mail ist aktiv und führt zu einer sicheren Seite.",
+              "Der Nutzer kann ein neues Passwort eingeben und dieses bestätigen.",
+              "Nach erfolgreichem Zurücksetzen wird der Nutzer zu einer Bestätigungsseite weitergeleitet."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T16:57:29.821Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "bf3f330c-7004-472e-99f7-b0ad513d6e9a",
+            "storyNumber": "US-009",
+            "title": "Passwort-Sicherheitsrichtlinien anzeigen",
+            "asA": "Nutzer, der ein neues Passwort erstellt",
+            "iWant": "die Sicherheitsanforderungen für mein neues Passwort zu sehen",
+            "soThat": "ich ein sicheres Passwort wähle, das den Richtlinien entspricht",
+            "description": "Als Nutzer, der ein neues Passwort erstellt möchte ich die Sicherheitsanforderungen für mein neues Passwort zu sehen, damit ich ein sicheres Passwort wähle, das den Richtlinien entspricht.",
+            "acceptanceCriteria": [
+              "Die Sicherheitsrichtlinien sind klar und gut sichtbar auf der Passwort-Zurücksetzen-Seite dargestellt.",
+              "Es gibt Hinweise, die dem Nutzer helfen, ein gültiges Passwort zu erstellen."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T16:57:29.821Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "ff3e482f-0d06-48ec-8d1c-b40f18e0b5f3",
+            "storyNumber": "US-010",
+            "title": "Passwort erfolgreich geändert",
+            "asA": "Nutzer, der sein Passwort geändert hat",
+            "iWant": "eine Bestätigung über die erfolgreiche Passwortänderung zu erhalten",
+            "soThat": "ich sicher bin, dass mein Passwort zurückgesetzt wurde",
+            "description": "Als Nutzer, der sein Passwort geändert hat möchte ich eine Bestätigung über die erfolgreiche Passwortänderung zu erhalten, damit ich sicher bin, dass mein Passwort zurückgesetzt wurde.",
+            "acceptanceCriteria": [
+              "Nach der Passwortänderung erhält der Nutzer eine Bestätigungsnachricht auf der Webseite.",
+              "Der Nutzer kann sich mit dem neuen Passwort erfolgreich einloggen."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T16:57:29.821Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          }
+        ],
+        "storiesStatus": "ready",
+        "storiesFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/fbe86a89-3aee-48ba-b9e2-0ab7c9520839/Userstories.md",
+        "smDirective": "Peter, bitte erstelle für das neue Feature \"Passwort-Reset\" entsprechende User Stories mit klaren Abnahmekriterien. Die User Stories sollten den Prozess des Passwort-Resets und alle relevanten Benutzerinteraktionen abdecken. Achte darauf, dass die Abnahmekriterien spezifisch, messbar und umsetzbar sind. Setze eine Deadline für die Fertigstellung auf spätestens zum nächsten Backlog Refinement."
+      },
+      {
+        "id": "ce8d22b5-b719-4562-b29b-f9c542659308",
+        "name": "Das Frontend soll ein 4 Gewinnt Spiel anzeigen",
+        "description": "Schaut im Internet nach, wie das aussieht",
+        "status": "new",
+        "createdAt": "2026-03-21T17:01:39.699Z",
+        "userStories": [
+          {
+            "id": "09ad0fd7-ebdc-469e-b488-b74d71c624fc",
+            "storyNumber": "US-005",
+            "title": "Anzeigen des 4 Gewinnt Spiels",
+            "asA": "Nutzer",
+            "iWant": "das 4 Gewinnt Spiel im Frontend angezeigt zu bekommen",
+            "soThat": "ich das Spiel spielen kann",
+            "description": "Als Nutzer möchte ich das 4 Gewinnt Spiel im Frontend angezeigt zu bekommen, damit ich das Spiel spielen kann.",
+            "acceptanceCriteria": [
+              "Das Spielbrett besteht aus 7 Spalten und 6 Reihen.",
+              "Die Spieler können abwechselnd ihre Steine in eine der Spalten fallen lassen.",
+              "Das Spiel zeigt an, welcher Spieler am Zug ist.",
+              "Das Spiel endet, wenn ein Spieler 4 Steine in einer Reihe hat oder alle Felder befüllt sind.",
+              "Der Nutzer erhält eine Fehlermeldung, wenn er versucht, einen Stein in eine bereits volle Spalte zu setzen."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:01:47.676Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "d06c896d-8649-4fec-87ac-f4dbc05021b5",
+            "storyNumber": "US-006",
+            "title": "Spielstand zurücksetzen",
+            "asA": "Nutzer",
+            "iWant": "das Spiel nach dem Ende zurückzusetzen",
+            "soThat": "ich eine neue Partie spielen kann",
+            "description": "Als Nutzer möchte ich das Spiel nach dem Ende zurückzusetzen, damit ich eine neue Partie spielen kann.",
+            "acceptanceCriteria": [
+              "Ein Button zum Zurücksetzen des Spiels ist sichtbar.",
+              "Nach dem Klicken auf den Zurücksetzen-Button wird das Spielbrett geleert.",
+              "Die Nutzer sehen eine Bestätigung, dass das Spiel zurückgesetzt wurde."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:01:47.676Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "f24c7d48-b491-486d-904c-fccc024aaf02",
+            "storyNumber": "US-007",
+            "title": "Anzeige von Fehlermeldungen",
+            "asA": "Nutzer",
+            "iWant": "Fehlermeldungen angezeigt zu bekommen, wenn ich einen Fehler mache",
+            "soThat": "ich weiß, warum ich einen Zug nicht ausführen kann",
+            "description": "Als Nutzer möchte ich Fehlermeldungen angezeigt zu bekommen, wenn ich einen Fehler mache, damit ich weiß, warum ich einen Zug nicht ausführen kann.",
+            "acceptanceCriteria": [
+              "Wenn ich versuche, in eine volle Spalte zu spielen, erscheint eine Fehlermeldung.",
+              "Die Fehlermeldung ist klar und verständlich formuliert.",
+              "Die Fehlermeldung verschwindet nach 5 Sekunden oder wenn ich einen neuen Zug mache."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:01:47.676Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          }
+        ],
+        "storiesStatus": "ready",
+        "storiesFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/ce8d22b5-b719-4562-b29b-f9c542659308/Userstories.md",
+        "smDirective": "Peter, bitte erstelle User Stories für das neue Feature \"Das Frontend soll ein 4 Gewinnt Spiel anzeigen\". Achte darauf, klare Abnahmekriterien zu definieren, die den Funktionsumfang und die Benutzererfahrung beschreiben. Die User Stories sollten so formuliert sein, dass sie für das Team verständlich und umsetzbar sind. Idealerweise orientiere dich an bestehenden Beispielen und beschreibe auch akzeptable Fehlerfälle. Setze dir eine Frist bis zum nächsten Sprint Planning."
+      },
+      {
+        "id": "e4482026-b406-46db-b9c8-a11c705d2569",
+        "name": "Der menschliche Spieler soll gegen einen Comuterspieler antreten können",
+        "description": "Der Comuter hat 3 Schwierikgeitsgrade.\nEasy, medium, kill you",
+        "status": "new",
+        "createdAt": "2026-03-21T17:13:10.235Z",
+        "userStories": [
+          {
+            "id": "4905f910-96e1-42f2-b2d0-4f10fa4ba07f",
+            "storyNumber": "US-008",
+            "title": "Menschlicher Spieler gegen einfachen Computergegner",
+            "asA": "menschlicher Spieler",
+            "iWant": "gegen einen Computergegner im Schwierigkeitsgrad 'Easy' antreten",
+            "soThat": "ich eine entspannte und weniger herausfordernde Spielerfahrung habe",
+            "description": "Als menschlicher Spieler möchte ich gegen einen Computergegner im Schwierigkeitsgrad 'Easy' antreten, damit ich eine entspannte und weniger herausfordernde Spielerfahrung habe.",
+            "acceptanceCriteria": [
+              "Der Computergegner führt einfache Züge aus, die leicht vorhersehbar sind.",
+              "Der menschliche Spieler gewinnt mindestens 80% der Spiele gegen den Computer auf 'Easy'."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:13:17.046Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "e22b9a43-23fc-43f1-a994-08b95ae4cac2",
+            "storyNumber": "US-009",
+            "title": "Menschlicher Spieler gegen mittleren Computergegner",
+            "asA": "menschlicher Spieler",
+            "iWant": "gegen einen Computergegner im Schwierigkeitsgrad 'Medium' antreten",
+            "soThat": "ich eine ausgewogene Herausforderung erlebe, die strategisches Denken erfordert",
+            "description": "Als menschlicher Spieler möchte ich gegen einen Computergegner im Schwierigkeitsgrad 'Medium' antreten, damit ich eine ausgewogene Herausforderung erlebe, die strategisches Denken erfordert.",
+            "acceptanceCriteria": [
+              "Der Computergegner führt verschiedene Züge aus, die strategisch sinnvoll sind.",
+              "Der menschliche Spieler gewinnt zwischen 40% und 60% der Spiele gegen den Computer auf 'Medium'."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:13:17.046Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "9dfa2002-157e-4a36-a2ec-5c161281d0a7",
+            "storyNumber": "US-010",
+            "title": "Menschlicher Spieler gegen schwierigen Computergegner",
+            "asA": "menschlicher Spieler",
+            "iWant": "gegen einen Computergegner im Schwierigkeitsgrad 'Kill You' antreten",
+            "soThat": "ich extrem herausgefordert werde und meine Fähigkeiten auf die Probe gestellt werden",
+            "description": "Als menschlicher Spieler möchte ich gegen einen Computergegner im Schwierigkeitsgrad 'Kill You' antreten, damit ich extrem herausgefordert werde und meine Fähigkeiten auf die Probe gestellt werden.",
+            "acceptanceCriteria": [
+              "Der Computergegner nutzt fortgeschrittene Strategien und Züge, die schwer vorhersehbar sind.",
+              "Der menschliche Spieler gewinnt weniger als 20% der Spiele gegen den Computer auf 'Kill You'."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:13:17.046Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          }
+        ],
+        "storiesStatus": "ready",
+        "storiesFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/e4482026-b406-46db-b9c8-a11c705d2569/Userstories.md",
+        "smDirective": "Peter, bitte erstelle für das neue Feature \"Der menschliche Spieler soll gegen einen Computervonspieler antreten können\" detaillierte User Stories mit klaren Abnahmekriterien. Achte darauf, die drei Schwierigkeitsgrade (Easy, Medium, Kill You) zu berücksichtigen. Stelle sicher, dass alle relevanten Aspekte für die Implementierung der Herausforderung abgedeckt sind. Bitte reiche diese User Stories vor dem nächsten Sprint Planning ein."
+      },
+      {
+        "id": "a5706acc-18cd-47b9-8577-b3fbeb4303bd",
+        "name": "DieFarbe der Spielsteine soll von den Spielern ausgewähl werden können",
+        "description": "Drauf achten. dass man die Steine auch farblich unterscheiden kann.",
+        "status": "new",
+        "createdAt": "2026-03-21T17:32:59.681Z",
+        "userStories": [
+          {
+            "id": "74522ec2-5875-4221-a17c-6c2345135b58",
+            "storyNumber": "US-011",
+            "title": "Farbe der Spielsteine auswählen",
+            "asA": "Spieler",
+            "iWant": "die Farbe meiner Spielsteine auszuwählen",
+            "soThat": "ich meine Steine individuell anpassen kann und sie von den anderen unterscheiden kann",
+            "description": "Als Spieler möchte ich die Farbe meiner Spielsteine auszuwählen, damit ich meine Steine individuell anpassen kann und sie von den anderen unterscheiden kann.",
+            "acceptanceCriteria": [
+              "Der Spieler kann aus mindestens 5 verschiedenen Farben wählen",
+              "Die ausgewählten Farben der Spielsteine sind visuell gut unterscheidbar",
+              "Die Auswahl bleibt bis zum Spielende bestehen und kann nicht während des Spiels verändert werden"
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:05.490Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "986441d1-0442-4f6b-9a9c-d9eaffd2e656",
+            "storyNumber": "US-012",
+            "title": "Farbauswahl speichern",
+            "asA": "Spieler",
+            "iWant": "meine Farbauswahl für die Spielsteine zu speichern",
+            "soThat": "ich meine Wahl auch in zukünftigen Spielen wieder verwenden kann",
+            "description": "Als Spieler möchte ich meine Farbauswahl für die Spielsteine zu speichern, damit ich meine Wahl auch in zukünftigen Spielen wieder verwenden kann.",
+            "acceptanceCriteria": [
+              "Die ausgewählte Farbe bleibt beim nächsten Spiel gespeichert",
+              "Der Spieler erhält eine Bestätigung, dass die Farbauswahl erfolgreich gespeichert wurde"
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:05.490Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "30d82077-1802-400e-8e20-d180512b800b",
+            "storyNumber": "US-013",
+            "title": "Farbänderung in der Vorschau sehen",
+            "asA": "Spieler",
+            "iWant": "eine Vorschau der Spielsteine in der ausgewählten Farbe zu sehen",
+            "soThat": "ich sicherstellen kann, dass die Farbe gut aussieht und unterscheidbar ist",
+            "description": "Als Spieler möchte ich eine Vorschau der Spielsteine in der ausgewählten Farbe zu sehen, damit ich sicherstellen kann, dass die Farbe gut aussieht und unterscheidbar ist.",
+            "acceptanceCriteria": [
+              "Die Vorschau zeigt jede Farbe genau so, wie sie im Spiel verwendet wird",
+              "Der Spieler kann die Vorschau vor der Bestätigung der Auswahl ansehen"
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:05.490Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          }
+        ],
+        "storiesStatus": "ready",
+        "technicalStories": [
+          {
+            "id": "38f2a703-509a-49e1-995d-26ee50af3195",
+            "tusNumber": "TUS-001",
+            "title": "Implementierung der Farbauswahl im Frontend",
+            "component": "Frontend",
+            "description": "Entwicklung der Farbauswahl-Komponente mit einer Dropdown-Liste oder Farbpalette, die dem Spieler ermöglicht, eine Farbe auszuwählen. Die ausgewählte Farbe soll direkt in der Vorschau angezeigt werden.",
+            "linkedStories": [
+              "US-011",
+              "US-013"
+            ],
+            "acceptanceCriteria": [
+              "Die Farbauswahl-Komponente ist responsive und benutzerfreundlich.",
+              "Die ausgewählte Farbe wird in der Vorschau korrekt wiedergegeben."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:16.921Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          },
+          {
+            "id": "9a3117ea-0f2c-4db1-80b7-11caa02cf446",
+            "tusNumber": "TUS-002",
+            "title": "API zur Speicherung der Farbauswahl",
+            "component": "API",
+            "description": "Entwicklung einer RESTful API für das Speichern und Abrufen der Farbauswahl der Spieler. Die API muss sowohl POST- als auch GET-Anfragen unterstützen.",
+            "linkedStories": [
+              "US-012"
+            ],
+            "acceptanceCriteria": [
+              "Die API kann die Farbauswahl erfolgreich speichern und abrufen.",
+              "Die API antwortet mit entsprechenden HTTP-Statuscodes (200, 201, 404, 500)."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:16.921Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          },
+          {
+            "id": "b9722b4a-5a38-4e08-a2c8-c453efa903e4",
+            "tusNumber": "TUS-003",
+            "title": "Datenbankeinrichtung für Farbauswahl",
+            "component": "Datenbank",
+            "description": "Erstellung der Tabelle 'Spieler' in der SQLite-Datenbank mit den notwendigen Feldern für Spielername und Farbauswahl.",
+            "linkedStories": [],
+            "acceptanceCriteria": [
+              "Die Tabelle 'Spieler' ist erfolgreich in der Datenbank angelegt.",
+              "Die Spalten 'id', 'spielername' und 'farbauswahl' sind korrekt konfiguriert."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:16.921Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          },
+          {
+            "id": "6616e792-0d58-498c-babb-2d751bc767e1",
+            "tusNumber": "TUS-004",
+            "title": "Integrationstest für die Farbauswahl",
+            "component": "Infrastruktur",
+            "description": "Durchführung von Integrationstests, um die Funktionalität der Farbauswahl über die API zu überprüfen und sicherzustellen, dass die Frontend-Komponente korrekt mit dem Backend interagiert.",
+            "linkedStories": [
+              "US-011",
+              "US-012",
+              "US-013"
+            ],
+            "acceptanceCriteria": [
+              "Integrationstests decken alle relevanten Endpunkte der API ab.",
+              "Es gibt keine Fehler in der Kommunikation zwischen Frontend und Backend."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:33:16.921Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          }
+        ],
+        "storiesFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/a5706acc-18cd-47b9-8577-b3fbeb4303bd/Userstories.md",
+        "smDirective": "Peter, bitte erstelle User Stories für das neue Feature „Die Farbe der Spielsteine soll von den Spielern ausgewählt werden können“. Achte darauf, klare Abnahmekriterien zu definieren, die sicherstellen, dass die Steine farblich unterscheidbar sind. Stelle sicher, dass die Stories verständlich und umsetzbar sind. Nutze das Format \"Als [Rolle] möchte ich [Ziel], damit [Nutzen]\". Danke!",
+        "architectureFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/Architecture.md"
+      },
+      {
+        "id": "04182bc9-c995-406b-9632-9dec0bd019fe",
+        "name": "Nach oder während Spielende kann der Spieler die App beenden. Er wird dabei nett verabschiedet",
+        "description": "",
+        "status": "new",
+        "createdAt": "2026-03-21T17:35:43.932Z",
+        "userStories": [
+          {
+            "id": "f18aee7a-b200-4fb1-a28e-9d545b477f81",
+            "storyNumber": "US-014",
+            "title": "App beenden nach Spielende",
+            "asA": "Spieler",
+            "iWant": "die App nach dem Spielende zu schließen",
+            "soThat": "ich die App verlassen kann, wenn ich nicht mehr spielen möchte",
+            "description": "Als Spieler möchte ich die App nach dem Spielende zu schließen, damit ich die App verlassen kann, wenn ich nicht mehr spielen möchte.",
+            "acceptanceCriteria": [
+              "Der Spieler kann die App nach dem Spielende über eine Schaltfläche beenden.",
+              "Vor dem Beenden erhält der Spieler eine freundliche Verabschiedung."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:49.717Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "b7bea201-6653-4a29-b943-e5f6acf90d3f",
+            "storyNumber": "US-015",
+            "title": "App beenden während des Spiels",
+            "asA": "Spieler",
+            "iWant": "die App während des Spiels zu schließen",
+            "soThat": "ich die Möglichkeit habe, die App jederzeit zu verlassen, wenn ich es möchte",
+            "description": "Als Spieler möchte ich die App während des Spiels zu schließen, damit ich die Möglichkeit habe, die App jederzeit zu verlassen, wenn ich es möchte.",
+            "acceptanceCriteria": [
+              "Der Spieler kann die App während des Spiels über eine Schaltfläche beenden.",
+              "Vor dem Beenden erhält der Spieler eine freundliche Verabschiedung."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:49.717Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          },
+          {
+            "id": "a76614ab-9aa3-4413-aa0f-7533080541ab",
+            "storyNumber": "US-016",
+            "title": "Freundliche Verabschiedung implementieren",
+            "asA": "Spieler",
+            "iWant": "eine nette Verabschiedung zu erhalten, wenn ich die App schließe",
+            "soThat": "ich mich wertgeschätzt fühle und gerne zurückkehren möchte",
+            "description": "Als Spieler möchte ich eine nette Verabschiedung zu erhalten, wenn ich die App schließe, damit ich mich wertgeschätzt fühle und gerne zurückkehren möchte.",
+            "acceptanceCriteria": [
+              "Die Verabschiedung wird als pop-up Nachricht angezeigt, wenn der Spieler die App schließen möchte.",
+              "Die Verabschiedung kann verschiedene positive Botschaften enthalten."
+            ],
+            "storyPoints": 0,
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:49.717Z",
+            "generatedBy": "Peter (Product Owner)",
+            "coordinatedBy": "Susi (Scrum Master)"
+          }
+        ],
+        "storiesStatus": "ready",
+        "technicalStories": [
+          {
+            "id": "a664f1fe-fed6-4fc7-a47e-8d80cf9406cf",
+            "tusNumber": "TUS-005",
+            "title": "Implementierung des Verabschiedungs-Endpoints",
+            "component": "Backend",
+            "description": "Ein API-Endpoint zur Verarbeitung der Logik der freundlichen Verabschiedung implementieren.",
+            "linkedStories": [
+              "US-016"
+            ],
+            "acceptanceCriteria": [
+              "Der Endpoint gibt eine freundliche Verabschiedung zurück, wenn die App beendet wird."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:59.771Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          },
+          {
+            "id": "483cb9c5-2f69-49e2-9537-ff5535fd7b08",
+            "tusNumber": "TUS-006",
+            "title": "Frontend-Integration der Verabschiedungs-Komponente",
+            "component": "Frontend",
+            "description": "Die Verabschiedungs-Komponente implementieren, die beim Schließen der App angezeigt wird.",
+            "linkedStories": [
+              "US-014",
+              "US-015"
+            ],
+            "acceptanceCriteria": [
+              "Die Verabschiedungs-Komponente wird korrekt angezeigt, wenn der Spieler die App schließt."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:59.771Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          },
+          {
+            "id": "6087a1ca-b101-4570-9483-75e27d366d21",
+            "tusNumber": "TUS-007",
+            "title": "Datenbankanpassung für Spielerinformationen",
+            "component": "Datenbank",
+            "description": "Die Tabelle `Spieler` anpassen, um zusätzliche Informationen für die Verabschiedung zu speichern.",
+            "linkedStories": [],
+            "acceptanceCriteria": [
+              "Die Tabelle `Spieler` enthält ein neues Feld für die Verabschiedungstexte."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:59.771Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          },
+          {
+            "id": "0571d05d-6982-44ef-828d-8151ed109298",
+            "tusNumber": "TUS-008",
+            "title": "Performance-Optimierung des Verabschiedungs-Endpoints",
+            "component": "API",
+            "description": "Den neuen Verabschiedungs-Endpoint so optimieren, dass er schnell und effizient auf Anfragen reagiert.",
+            "linkedStories": [
+              "US-016"
+            ],
+            "acceptanceCriteria": [
+              "Der Endpoint reagiert binnen 200ms auf eine Anfrage."
+            ],
+            "status": "new",
+            "createdAt": "2026-03-21T17:35:59.771Z",
+            "generatedBy": "Tobias (Technischer Product Owner)"
+          }
+        ],
+        "storiesFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/04182bc9-c995-406b-9632-9dec0bd019fe/Userstories.md",
+        "smDirective": "Peter, bitte erstelle User Stories für das neue Feature \"Nach oder während Spielende kann der Spieler die App beenden. Er wird dabei nett verabschiedet\". Achte darauf, dass jede User Story klare Abnahmekriterien enthält. Dies wird uns helfen, die Implementierung besser zu steuern und sicherzustellen, dass das Feature den Erwartungen entspricht. Bitte stelle die User Stories bis zum nächsten Refinement-Termin zur Verfügung. Vielen Dank!",
+        "architectureFile": "/home/moellerm/Programming/ProjectsByScrumTeam/Test3/Architecture.md"
+      }
+    ]
+  }
+]
