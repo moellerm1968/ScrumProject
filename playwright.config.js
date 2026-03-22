@@ -26,6 +26,7 @@ export default defineConfig({
 
   use: {
     baseURL: `http://localhost:${CLIENT_PORT}`,
+    headless: false,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

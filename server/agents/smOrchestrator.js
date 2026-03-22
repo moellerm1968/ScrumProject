@@ -156,7 +156,7 @@ export async function orchestratePoForFeature({ project, feature }) {
     details: stories.map((s) => `${s.storyNumber} ${s.title}`).join(' · '),
   });
 
-  const featureDir = join(workDir, feature.id);
+  const featureDir = join(workDir, feature.featureDir ?? feature.id);
   if (!existsSync(featureDir)) mkdirSync(featureDir, { recursive: true });
 
   const filePath = join(featureDir, 'Userstories.md');

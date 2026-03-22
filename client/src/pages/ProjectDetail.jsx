@@ -114,30 +114,40 @@ export default function ProjectDetail() {
 
   return (
     <div>
-      <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4 flex-wrap">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">
-          Projekte
+      {/* ── Breadcrumb ────────────────────────────────────────────────────────── */}
+      <nav className="flex items-center gap-2 text-sm mb-4 flex-wrap">
+        <Link to="/" className="text-indigo-400 hover:text-indigo-600 font-medium transition-colors">
+          📁 Projekte
         </Link>
         <span className="text-gray-300">›</span>
-        <span className="text-gray-800 font-medium">{project.name}</span>
+        <span className="text-emerald-700 font-semibold">⚡ {project.name}</span>
       </nav>
 
-      <div className="flex items-start justify-between mb-6 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">{project.name}</h1>
-          {project.description && (
-            <p className="text-gray-500 text-sm mt-1">{project.description}</p>
-          )}
-          <p className="text-xs text-gray-400 mt-1">
-            {project.features?.length ?? 0} Features
-          </p>
+      {/* ── Ebenen-Banner: Feature-Ebene ───────────────────────────────────── */}
+      <div className="bg-emerald-700 text-white rounded-2xl px-6 py-5 mb-6 shadow-lg">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="bg-emerald-500 rounded-xl p-3 text-2xl leading-none">⚡</div>
+            <div>
+              <p className="text-xs font-semibold text-emerald-300 uppercase tracking-widest mb-0.5">Ebene 2 — Projekt</p>
+              <h1 className="text-3xl font-extrabold leading-tight">{project.name}</h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-emerald-200 text-sm font-medium">
+              {project.features?.length ?? 0} Features
+            </span>
+            <button
+              onClick={openCreate}
+              className="px-4 py-2 bg-white text-emerald-700 rounded-lg hover:bg-emerald-50 transition-colors text-sm font-semibold shadow"
+            >
+              + Neues Feature
+            </button>
+          </div>
         </div>
-        <button
-          onClick={openCreate}
-          className="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-        >
-          + Neues Feature
-        </button>
+        {project.description && (
+          <p className="text-emerald-100 text-sm mt-3 leading-relaxed">{project.description}</p>
+        )}
       </div>
 
       <KanbanBoard

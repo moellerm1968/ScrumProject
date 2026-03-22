@@ -148,19 +148,28 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Projekte</h1>
-          <p className="text-sm text-gray-400 mt-0.5">
-            {projects.length} Projekt{projects.length !== 1 ? 'e' : ''}
-          </p>
+      {/* ── Ebenen-Banner: Projekte ─────────────────────────────────────────────── */}
+      <div className="bg-indigo-700 text-white rounded-2xl px-6 py-5 mb-6 shadow-lg">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="bg-indigo-500 rounded-xl p-3 text-2xl leading-none">📁</div>
+            <div>
+              <p className="text-xs font-semibold text-indigo-300 uppercase tracking-widest mb-0.5">Ebene 1 — Projekte</p>
+              <h1 className="text-3xl font-extrabold leading-tight">Projekte</h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-indigo-200 text-sm font-medium">
+              {projects.length} Projekt{projects.length !== 1 ? 'e' : ''}
+            </span>
+            <button
+              onClick={openCreate}
+              className="px-4 py-2 bg-white text-indigo-700 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-semibold shadow"
+            >
+              + Neues Projekt
+            </button>
+          </div>
         </div>
-        <button
-          onClick={openCreate}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-        >
-          + Neues Projekt
-        </button>
       </div>
 
       <KanbanBoard

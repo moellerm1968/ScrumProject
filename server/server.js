@@ -90,6 +90,18 @@ function copyTeamFiles(workDir) {
   return team;
 }
 
+// Generate a readable feature directory name: NNNN_SprechenderName
+function makeFeatureDirName(featureCount, featureName) {
+  const num = String(featureCount).padStart(4, '0');
+  const slug = featureName
+    .trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // strip diacritics
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+    .slice(0, 60);
+  return `${num}_${slug}`;
+}
+
 // Validate a directory name: must be a plain name (no slashes, no dots-dots)
 function isValidDirName(name) {
   if (!name || typeof name !== 'string') return false;
@@ -297,12 +309,14 @@ app.post('/api/projects/:projectId/features', (req, res) => {
   const project = projects.find((p) => p.id === req.params.projectId);
   if (!project) return res.status(404).json({ error: 'Project not found' });
 
+  const featureDir = makeFeatureDirName(project.features.length + 1, name.trim());
   const feature = {
     id: uuidv4(),
     name: name.trim(),
     description: description?.trim() || '',
     status: 'new',
     createdAt: new Date().toISOString(),
+    featureDir,
     userStories: [],
     storiesStatus: 'pending', // SM starts PO immediately
   };

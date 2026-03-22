@@ -85,12 +85,6 @@ export default function FeatureDetail() {
     }
   };
 
-  const openCreate = () => {
-    setEditingStory(null);
-    setFormData(EMPTY_FORM);
-    setShowModal(true);
-  };
-
   const openEdit = (story) => {
     setEditingStory(story);
     setFormData({
@@ -104,12 +98,9 @@ export default function FeatureDetail() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!editingStory) return; // User Stories werden nur vom KI-Agenten erstellt
     try {
-      if (editingStory) {
-        await api.updateStory(projectId, featureId, editingStory.id, formData);
-      } else {
-        await api.createStory(projectId, featureId, formData);
-      }
+      await api.updateStory(projectId, featureId, editingStory.id, formData);
       setShowModal(false);
       fetchData();
     } catch (e) {
@@ -306,46 +297,43 @@ export default function FeatureDetail() {
 
   return (
     <div>
-      <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4 flex-wrap">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">
-          Projekte
+      {/* ── Breadcrumb ────────────────────────────────────────────────────────── */}
+      <nav className="flex items-center gap-2 text-sm mb-4 flex-wrap">
+        <Link to="/" className="text-indigo-400 hover:text-indigo-600 font-medium transition-colors">
+          📁 Projekte
         </Link>
         <span className="text-gray-300">›</span>
-        <Link
-          to={`/projects/${projectId}`}
-          className="hover:text-indigo-600 transition-colors"
-        >
-          {project.name}
+        <Link to={`/projects/${projectId}`} className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
+          ⚡ {project.name}
         </Link>
         <span className="text-gray-300">›</span>
-        <span className="text-gray-800 font-medium">{feature.name}</span>
+        <span className="text-amber-700 font-semibold">📌 {feature.name}</span>
       </nav>
 
-      <div className="flex items-start justify-between mb-6 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">{feature.name}</h1>
-          {feature.description && (
-            <p className="text-gray-500 text-sm mt-1">{feature.description}</p>
-          )}
-          <div className="flex gap-4 text-xs text-gray-400 mt-2">
-            <span>{feature.userStories?.length ?? 0} Stories</span>
-            <span>Gesamt: {totalSP} SP</span>
-            <span>
-              Fertig: {doneSP} SP
+      {/* ── Ebenen-Banner: User-Story-Ebene ───────────────────────────────────── */}
+      <div className="bg-amber-600 text-white rounded-2xl px-6 py-5 mb-6 shadow-lg">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="bg-amber-400 rounded-xl p-3 text-2xl leading-none">📌</div>
+            <div>
+              <p className="text-xs font-semibold text-amber-200 uppercase tracking-widest mb-0.5">Ebene 3 — Feature</p>
+              <h1 className="text-3xl font-extrabold leading-tight">{feature.name}</h1>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <div className="flex gap-4 text-sm text-amber-100 font-medium">
+              <span>{feature.userStories?.length ?? 0} Stories</span>
+              <span>Gesamt: {totalSP} SP</span>
               {totalSP > 0 && (
-                <span className="ml-1 text-indigo-400">
-                  ({Math.round((doneSP / totalSP) * 100)}%)
-                </span>
+                <span>Fertig: {doneSP} SP ({Math.round((doneSP / totalSP) * 100)}%)</span>
               )}
-            </span>
+            </div>
+            <p className="text-xs text-amber-200">User Stories werden vom KI-Team generiert</p>
           </div>
         </div>
-        <button
-          onClick={openCreate}
-          className="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-        >
-          + Neue Story
-        </button>
+        {feature.description && (
+          <p className="text-amber-100 text-sm mt-3 leading-relaxed">{feature.description}</p>
+        )}
       </div>
 
       {/* SM→PO orchestration status banner */}
@@ -434,12 +422,12 @@ export default function FeatureDetail() {
         />
       </div>
 
-      {showModal && (
+      {showModal && editingStory && (
         <Modal
-          title={editingStory ? 'User Story bearbeiten' : 'Neue User Story'}
+          title="User Story bearbeiten"
           onClose={() => setShowModal(false)}
           onSubmit={handleSubmit}
-          submitLabel={editingStory ? 'Speichern' : 'Erstellen'}
+          submitLabel="Speichern"
         >
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Titel *</label>
