@@ -316,7 +316,7 @@ export default function FeatureDetail() {
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 rounded-xl p-3 text-2xl leading-none">📌</div>
             <div>
-              <p className="text-xs font-semibold text-amber-200 uppercase tracking-widest mb-0.5">Ebene 3 — Feature</p>
+              <p className="text-sm font-bold text-red-600 uppercase tracking-widest mb-0.5">Ebene 3 — Feature</p>
               <h1 className="text-3xl font-extrabold leading-tight">{feature.name}</h1>
             </div>
           </div>

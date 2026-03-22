@@ -129,7 +129,7 @@ export default function ProjectDetail() {
           <div className="flex items-center gap-4">
             <div className="bg-emerald-500 rounded-xl p-3 text-2xl leading-none">⚡</div>
             <div>
-              <p className="text-xs font-semibold text-emerald-300 uppercase tracking-widest mb-0.5">Ebene 2 — Projekt</p>
+              <p className="text-sm font-bold text-red-600 uppercase tracking-widest mb-0.5">Ebene 2 — Projekt</p>
               <h1 className="text-3xl font-extrabold leading-tight">{project.name}</h1>
             </div>
           </div>

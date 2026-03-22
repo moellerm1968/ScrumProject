@@ -10,8 +10,8 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="flex-1 container mx-auto px-4 py-6 max-w-7xl flex gap-6">
-          <main className="flex-1 min-w-0">
+        <div className="flex-1 flex gap-0">
+          <main className="flex-1 min-w-0 p-4">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/projects/:projectId" element={<ProjectDetail />} />
@@ -22,7 +22,7 @@ export default function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
-          <aside className="w-72 flex-shrink-0 bg-white border border-gray-200 rounded-lg p-4 sticky top-6 h-[calc(100vh-5rem)] flex flex-col">
+          <aside className="w-80 flex-shrink-0 bg-white border-l border-gray-200 p-4 sticky top-0 h-screen flex flex-col">
             <AgentFeed />
           </aside>
         </div>
