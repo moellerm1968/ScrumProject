@@ -10,6 +10,24 @@ const COLUMN_STYLES = {
     count: 'bg-blue-100 text-blue-700',
     tab: 'border-blue-500 text-blue-600',
   },
+  'in-planning': {
+    wrapper: 'bg-sky-50 border-sky-200',
+    title: 'text-sky-800',
+    count: 'bg-sky-100 text-sky-700',
+    tab: 'border-sky-500 text-sky-600',
+  },
+  planned: {
+    wrapper: 'bg-violet-50 border-violet-200',
+    title: 'text-violet-800',
+    count: 'bg-violet-100 text-violet-700',
+    tab: 'border-violet-500 text-violet-600',
+  },
+  'in-implementation': {
+    wrapper: 'bg-amber-50 border-amber-200',
+    title: 'text-amber-800',
+    count: 'bg-amber-100 text-amber-700',
+    tab: 'border-amber-500 text-amber-600',
+  },
   refined: {
     wrapper: 'bg-violet-50 border-violet-200',
     title: 'text-violet-800',

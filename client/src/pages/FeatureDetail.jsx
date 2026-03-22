@@ -4,6 +4,14 @@ import { api } from '../api/scrumApi';
 import KanbanBoard from '../components/KanbanBoard';
 import Modal from '../components/Modal';
 
+const FEATURE_STATUS_LABELS = {
+  'new':               { label: 'New',               color: 'bg-blue-100 text-blue-800' },
+  'in-planning':       { label: 'In Planning',       color: 'bg-sky-100 text-sky-800' },
+  'planned':           { label: 'Planned',           color: 'bg-violet-100 text-violet-800' },
+  'in-implementation': { label: 'In Implementation', color: 'bg-amber-100 text-amber-800' },
+  'implemented':       { label: 'Implemented',       color: 'bg-green-100 text-green-800' },
+};
+
 const STORY_STATUSES = [
   { key: 'new', label: 'New' },
   { key: 'refined', label: 'Refined' },
@@ -361,6 +369,10 @@ export default function FeatureDetail() {
             <div>
               <p className="text-sm font-bold text-red-600 uppercase tracking-widest mb-0.5">Ebene 3 — Feature</p>
               <h1 className="text-3xl font-extrabold leading-tight">{feature.name}</h1>
+              {(() => {
+                const s = FEATURE_STATUS_LABELS[feature.status] ?? { label: feature.status, color: 'bg-gray-100 text-gray-700' };
+                return <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-semibold ${s.color}`}>{s.label}</span>;
+              })()}
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">
@@ -461,12 +473,6 @@ export default function FeatureDetail() {
               )}
             </p>
           </div>
-          <button
-            onClick={openCreateTus}
-            className="flex-shrink-0 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
-          >
-            + Neue TUS
-          </button>
         </div>
         <KanbanBoard
           items={feature.technicalStories ?? []}

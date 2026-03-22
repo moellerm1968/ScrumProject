@@ -68,8 +68,6 @@ ok "Modell: ${LLM_MODEL}"
 
 echo ""
 read -rp "  Ollama-URL (leer = nicht nutzen, z.B. http://localhost:11434): " OLLAMA_URL
-read -rp "  GitHub Models CLI nutzen? (gh models run, kostenlos via gh auth) [J/n]: " _gh_cli_ans
-[[ "${_gh_cli_ans,,}" =~ ^(n|no|nein)$ ]] && GH_CLI_MODE= || GH_CLI_MODE=1
 ask_secret "OpenAI API Key" OPENAI_API_KEY
 ask_secret "Anthropic API Key (für claude-haiku, optional)" ANTHROPIC_API_KEY
 
@@ -166,7 +164,6 @@ head "3 / 4  .env-Dateien erstellen"
   echo "# LLM-Konfiguration"
   echo "LLM_MODEL=${LLM_MODEL}"
   echo "LLM_DELAY_MS=${LLM_DELAY_MS}"
-  [[ "${GH_CLI_MODE:-}" == "1" ]] && echo "GH_CLI_MODE=1"
   [[ -n "${OLLAMA_URL:-}" ]]      && echo "OLLAMA_URL=${OLLAMA_URL}"
   [[ -n "${OPENAI_API_KEY:-}" ]]   && echo "OPENAI_API_KEY=${OPENAI_API_KEY}"
   [[ -n "${ANTHROPIC_API_KEY:-}" ]] && echo "ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}"

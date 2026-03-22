@@ -372,6 +372,16 @@ async function _runPoOrchestration(project, feature) {
       feat.architectureFile    = architectureFile;
       feat.prioritizationFile  = prioritizationFile;
       feat.refinementFile      = refinementFile;
+      // Refinement abgeschlossen → Feature-Status auf 'planned' setzen
+      if (feat.status === 'in-planning' || feat.status === 'new') {
+        feat.status = 'planned';
+        emitAgentEvent({
+          type: 'feature:update',
+          projectId: project.id,
+          featureId: feature.id,
+          message: 'Status geändert: planned',
+        });
+      }
       writeData(all);
     }
     console.log(
@@ -465,7 +475,23 @@ app.post('/api/projects/:projectId/features/:featureId/stories', (req, res) => {
     createdAt: new Date().toISOString(),
   };
   feature.userStories.push(story);
+
+  // Erste US → Feature-Status auf 'in-planning' setzen
+  if (feature.status === 'new' && feature.userStories.length === 1) {
+    feature.status = 'in-planning';
+  }
+
   writeData(projects);
+
+  if (feature.status === 'in-planning') {
+    emitAgentEvent({
+      type: 'feature:update',
+      projectId: req.params.projectId,
+      featureId: feature.id,
+      message: 'Status geändert: in-planning',
+    });
+  }
+
   res.status(201).json(story);
 });
 

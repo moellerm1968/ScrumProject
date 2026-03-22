@@ -71,14 +71,14 @@ Das Backend wählt automatisch das erste verfügbare LLM in dieser Reihenfolge:
 
 ```
 1. Ollama          (wenn OLLAMA_URL gesetzt)
-2. GitHub CLI      (wenn GH_CLI_MODE=1)  →  gh models run
+2. GitHub Models   (Standard, kostenlos via GITHUB_TOKEN / gh auth token)
                     ↳ Bei Fehler/Rate-Limit: 5 min Cooldown, dann weiter
 3. Anthropic       (wenn ANTHROPIC_API_KEY gesetzt)
 4. OpenAI          (wenn OPENAI_API_KEY gesetzt)
 5. Fehler          (kein Backend konfiguriert)
 ```
 
-Das aktive Backend wird in der **LLM-Status-Leiste** am unteren Bildschirmrand angezeigt. Während eines GH-CLI-Cooldowns erscheint dort der Fallback (z. B. `Anthropic (claude-haiku…)`).
+Das aktive Backend wird in der **LLM-Status-Leiste** am unteren Bildschirmrand angezeigt. Während eines GitHub-Models-Cooldowns erscheint dort der Fallback (z. B. `Anthropic (claude-haiku…)`).
 
 ---
 
@@ -89,9 +89,9 @@ Das aktive Backend wird in der **LLM-Status-Leiste** am unteren Bildschirmrand a
 | **Node.js** | 18+ | Laufzeitumgebung |
 | **npm** | 9+ | Paketverwaltung |
 | **git** | beliebig | Versionskontrolle |
-| **gh CLI** | beliebig | GitHub Models via CLI (optional) |
+| **gh CLI** | beliebig | GitHub-Authentifizierung (für GitHub Models, optional) |
 
-> **Hinweis:** `gh CLI` wird nur für `GH_CLI_MODE=1` benötigt (`gh auth login` + `gh extension install github/gh-models`).
+> **Hinweis:** `gh CLI` wird nur benötigt falls kein `GITHUB_TOKEN` gesetzt ist (`gh auth login`).
 > Alternativ können Anthropic, OpenAI oder Ollama verwendet werden — kein `gh`-Login erforderlich.
 
 ---
@@ -156,8 +156,8 @@ LLM_MODEL=gpt-4o-mini
 # Pause zwischen LLM-Anfragen in ms (verhindert Rate-Limits, Standard: 5000)
 LLM_DELAY_MS=5000
 
-# LLM-Option 1: GitHub Models via CLI (kostenlos, benötigt gh auth + gh-models Extension)
-GH_CLI_MODE=1
+# LLM-Option 1: GitHub Models via REST (Standard, kostenlos via GITHUB_TOKEN / gh auth token)
+# GITHUB_TOKEN=ghp_...
 
 # LLM-Option 2: Ollama (lokal, kein API-Key)
 # OLLAMA_URL=http://localhost:11434
@@ -196,12 +196,11 @@ npm run dev --prefix client     # → http://localhost:5173
 
 ## LLM-Backend konfigurieren
 
-### GitHub Models CLI (Standard, kostenlos)
+### GitHub Models REST (Standard, kostenlos)
 ```bash
 gh auth login
-gh extension install github/gh-models
 # server/.env:
-# GH_CLI_MODE=1
+# GITHUB_TOKEN=ghp_...   # optional, sonst wird gh auth token verwendet
 # LLM_MODEL=gpt-4o-mini
 ```
 

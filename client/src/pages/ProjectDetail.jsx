@@ -5,9 +5,11 @@ import KanbanBoard from '../components/KanbanBoard';
 import Modal from '../components/Modal';
 
 const FEATURE_STATUSES = [
-  { key: 'new', label: 'New' },
-  { key: 'in_progress', label: 'In Progress' },
-  { key: 'implemented', label: 'Implemented' },
+  { key: 'new',                label: 'New' },
+  { key: 'in-planning',        label: 'In Planning' },
+  { key: 'planned',            label: 'Planned' },
+  { key: 'in-implementation',  label: 'In Implementation' },
+  { key: 'implemented',        label: 'Implemented' },
 ];
 
 export default function ProjectDetail() {
@@ -34,6 +36,20 @@ export default function ProjectDetail() {
   useEffect(() => {
     fetchProject();
   }, [fetchProject]);
+
+  // SSE: Feature-Status-Änderungen sofort anzeigen (z.B. new → in-planning → planned)
+  useEffect(() => {
+    const es = new EventSource('/api/events');
+    es.onmessage = (e) => {
+      try {
+        const ev = JSON.parse(e.data);
+        if (ev.projectId === projectId && ev.type === 'feature:update') {
+          fetchProject();
+        }
+      } catch {}
+    };
+    return () => es.close();
+  }, [projectId, fetchProject]);
 
   const openCreate = () => {
     setEditingFeature(null);
