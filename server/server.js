@@ -2,7 +2,8 @@ import 'dotenv/config'; // must be first – populates process.env before other 
 import express from 'express';
 import cors from 'cors';
 import { orchestratePoForFeature } from './agents/smOrchestrator.js';
-import { sseSubscribe, sseUnsubscribe } from './agents/eventBus.js';
+import { getLLMBackendName } from './agents/agentRunner.js';
+import { sseSubscribe, sseUnsubscribe, emitAgentEvent } from './agents/eventBus.js';
 import {
   readFileSync,
   writeFileSync,
@@ -174,6 +175,10 @@ app.get('/api/config', (_req, res) => {
   res.json({ basePath: PROJECTS_BASE_DIR });
 });
 
+app.get('/api/llm-status', (_req, res) => {
+  res.json({ backend: getLLMBackendName() });
+});
+
 app.get('/api/copilot-check', async (_req, res) => {
   try {
     const check = await checkCopilotCli();
@@ -330,20 +335,43 @@ app.post('/api/projects/:projectId/features', (req, res) => {
 
 // Helper: run SM→PO in background and persist result
 async function _runPoOrchestration(project, feature) {
+  const onProgress = async ({ stories, technicalStories }) => {
+    try {
+      const all = readData();
+      const proj = all.find((p) => p.id === project.id);
+      const feat = proj?.features.find((f) => f.id === feature.id);
+      if (feat) {
+        feat.userStories      = stories;
+        feat.technicalStories = technicalStories;
+        writeData(all);
+        emitAgentEvent({
+          type: 'feature:update',
+          projectId: project.id,
+          featureId: feature.id,
+          message:   'Stories aktualisiert',
+        });
+      }
+    } catch (e) {
+      console.warn('onProgress write failed:', e.message);
+    }
+  };
+
   try {
-    const { stories, filePath, smDirective, technicalStories, architectureFile } =
-      await orchestratePoForFeature({ project, feature });
+    const { stories, filePath, smDirective, technicalStories, architectureFile, prioritizationFile, refinementFile } =
+      await orchestratePoForFeature({ project, feature, onProgress });
 
     const all = readData();
     const proj = all.find((p) => p.id === project.id);
     const feat = proj?.features.find((f) => f.id === feature.id);
     if (feat) {
-      feat.userStories       = stories;
-      feat.technicalStories  = technicalStories;
-      feat.storiesStatus     = 'ready';
-      feat.storiesFile       = filePath;
-      feat.smDirective       = smDirective;
-      feat.architectureFile  = architectureFile;
+      feat.userStories         = stories;
+      feat.technicalStories    = technicalStories;
+      feat.storiesStatus       = 'ready';
+      feat.storiesFile         = filePath;
+      feat.smDirective         = smDirective;
+      feat.architectureFile    = architectureFile;
+      feat.prioritizationFile  = prioritizationFile;
+      feat.refinementFile      = refinementFile;
       writeData(all);
     }
     console.log(

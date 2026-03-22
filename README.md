@@ -1,6 +1,6 @@
 # 🚀 ScrumBoard — KI-gestütztes Scrum-Projektmanagement
 
-Ein vollständiges Scrum-Board mit integriertem KI-Agenten-Team, das automatisch User Stories, technische Anforderungen und Architekturdokumente generiert.
+Ein vollständiges Scrum-Board mit integriertem KI-Agenten-Team, das automatisch User Stories, technische Anforderungen und Architekturdokumente generiert — und den Fortschritt live im Browser streamt.
 
 ---
 
@@ -13,9 +13,10 @@ Susi (Scrum Master)
   └─► Peter (Product Owner)       → generiert User Stories (US-001, US-002, …)
         └─► Tobias (Techn. PO)    → generiert Technische User Stories (TUS-001, …)
                                      + Architecture.md
+              └─► Refinement      → jede Story wird einzeln verfeinert (status: refined)
 ```
 
-Der gesamte Agent-Workflow wird live im integrierten **Agent Feed** (rechte Spalte) angezeigt.
+Alle Zwischenstände werden **live per SSE** in die Feature-Detailseite gestreamt — kein Reload nötig.
 
 ---
 
@@ -28,7 +29,9 @@ Der gesamte Agent-Workflow wird live im integrierten **Agent Feed** (rechte Spal
 | **User Stories** | Automatisch numeriert (US-001…), mit Abnahmekriterien |
 | **Technische Stories** | TUS-001…, gebunden an Component + verknüpfte US |
 | **Architecture.md** | Pro Feature automatisch generiert und aktualisiert |
-| **Agent Feed** | Echtzeit-SSE-Stream aller Agent-Aktivitäten |
+| **Agent Feed** | Echtzeit-SSE-Stream aller Agent-Aktivitäten (rechte Spalte) |
+| **Live-Updates** | Feature-Detailseite aktualisiert sich per SSE während Agenten arbeiten |
+| **LLM-Status** | Aktives Backend wird in der Fußzeile angezeigt (inkl. Cooldown-Info) |
 | **Dateiablage** | Alle Artefakte landen in `PROJECTS_BASE_DIR/<projektId>/<featureId>/` |
 
 ---
@@ -39,8 +42,8 @@ Der gesamte Agent-Workflow wird live im integrierten **Agent Feed** (rechte Spal
 Frontend         React 18 · Vite 5 · Tailwind CSS 3 · React Router 6
 Backend          Node.js (ESM) · Express 4 · dotenv
 Persistierung    JSON-Dateien (keine Datenbank erforderlich)
-Echtzeit         Server-Sent Events (SSE)
-KI-Agenten       GitHub Models (gpt-4o-mini) | OpenAI | Ollama (lokal)
+Echtzeit         Server-Sent Events (SSE) — Agent Feed + Feature Live-Updates
+KI-Agenten       Ollama (lokal) | GitHub Models CLI | Anthropic | OpenAI
 Tests            Playwright
 ```
 
@@ -62,6 +65,23 @@ Die Agent-Prompts liegen in `team/*.Agent.md` und können projektspezifisch in `
 
 ---
 
+## LLM-Backend — Prioritätskette
+
+Das Backend wählt automatisch das erste verfügbare LLM in dieser Reihenfolge:
+
+```
+1. Ollama          (wenn OLLAMA_URL gesetzt)
+2. GitHub CLI      (wenn GH_CLI_MODE=1)  →  gh models run
+                    ↳ Bei Fehler/Rate-Limit: 5 min Cooldown, dann weiter
+3. Anthropic       (wenn ANTHROPIC_API_KEY gesetzt)
+4. OpenAI          (wenn OPENAI_API_KEY gesetzt)
+5. Fehler          (kein Backend konfiguriert)
+```
+
+Das aktive Backend wird in der **LLM-Status-Leiste** am unteren Bildschirmrand angezeigt. Während eines GH-CLI-Cooldowns erscheint dort der Fallback (z. B. `Anthropic (claude-haiku…)`).
+
+---
+
 ## Voraussetzungen
 
 | Tool | Mindestversion | Wozu |
@@ -69,11 +89,10 @@ Die Agent-Prompts liegen in `team/*.Agent.md` und können projektspezifisch in `
 | **Node.js** | 18+ | Laufzeitumgebung |
 | **npm** | 9+ | Paketverwaltung |
 | **git** | beliebig | Versionskontrolle |
-| **gh CLI** | beliebig | GitHub Models (Standard-LLM) |
-| **gh copilot** Extension | – | via `gh extension install github/gh-copilot` |
+| **gh CLI** | beliebig | GitHub Models via CLI (optional) |
 
-> **Hinweis:** `gh CLI` und die Copilot-Extension werden nur für den GitHub-Models-Betrieb benötigt.  
-> Alternativ können OpenAI oder Ollama (lokal) verwendet werden — dann ist kein `gh`-Login erforderlich.
+> **Hinweis:** `gh CLI` wird nur für `GH_CLI_MODE=1` benötigt (`gh auth login` + `gh extension install github/gh-models`).
+> Alternativ können Anthropic, OpenAI oder Ollama verwendet werden — kein `gh`-Login erforderlich.
 
 ---
 
@@ -93,11 +112,12 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 .\install.ps1
 ```
 
-Das Skript führt interaktiv durch 4 Phasen:
+Das Skript führt interaktiv durch folgende Schritte:
 1. **Konfiguration** — Ports, LLM-Modell, Verzeichnisse
 2. **Tool-Check** — Node, npm, git, gh CLI, Authentifizierung
-3. **.env-Dateien** — werden automatisch aus den Eingaben generiert
-4. **npm install** — alle Abhängigkeiten werden installiert
+3. **LLM-Auswahl** — GitHub Models CLI (Standard), Anthropic API-Key, OpenAI
+4. **.env-Dateien** — werden automatisch generiert
+5. **npm install** — alle Abhängigkeiten werden installiert
 
 ---
 
@@ -109,11 +129,10 @@ npm run install:all
 
 # 2. Backend konfigurieren
 cp server/.env.example server/.env
-# server/.env anpassen (Port, Verzeichnis, LLM-Modell)
+# server/.env anpassen (Port, Verzeichnis, LLM-Konfiguration)
 
 # 3. Frontend konfigurieren
 cp client/.env.example client/.env
-# client/.env anpassen (Ports)
 
 # 4. Dev-Server starten
 npm run dev
@@ -129,16 +148,26 @@ npm run dev
 # Server
 PORT=3001
 PROJECTS_BASE_DIR=/home/user/ScrumProjects
-CLIENT_PORT=5173                      # für CORS-Whitelist
+CLIENT_PORT=5173                        # für CORS-Whitelist
 
-# LLM – Priorität: OLLAMA_URL > OPENAI_API_KEY > GitHub Models
+# Modellname (für GitHub Models CLI und OpenAI)
 LLM_MODEL=gpt-4o-mini
 
-# Option A: Ollama (lokal, kein API-Key)
+# Pause zwischen LLM-Anfragen in ms (verhindert Rate-Limits, Standard: 5000)
+LLM_DELAY_MS=5000
+
+# LLM-Option 1: GitHub Models via CLI (kostenlos, benötigt gh auth + gh-models Extension)
+GH_CLI_MODE=1
+
+# LLM-Option 2: Ollama (lokal, kein API-Key)
 # OLLAMA_URL=http://localhost:11434
 # OLLAMA_MODEL=llama3.2
 
-# Option B: OpenAI-kompatible API
+# LLM-Option 3: Anthropic (Fallback bei Rate-Limits)
+# ANTHROPIC_API_KEY=sk-ant-...
+# ANTHROPIC_MODEL=claude-haiku-4-5-20251001
+
+# LLM-Option 4: OpenAI-kompatible API
 # OPENAI_API_KEY=sk-...
 # OPENAI_API_URL=https://api.openai.com/v1/chat/completions
 ```
@@ -155,7 +184,7 @@ VITE_BACKEND_PORT=3001
 ## Starten
 
 ```bash
-# Backend + Frontend gleichzeitig (mit farbiger Log-Ausgabe)
+# Backend + Frontend gleichzeitig
 npm run dev
 
 # Einzeln:
@@ -165,12 +194,15 @@ npm run dev --prefix client     # → http://localhost:5173
 
 ---
 
-## LLM-Backend wählen
+## LLM-Backend konfigurieren
 
-### GitHub Models (Standard, kostenlos)
+### GitHub Models CLI (Standard, kostenlos)
 ```bash
 gh auth login
-# LLM_MODEL=gpt-4o-mini  (in server/.env)
+gh extension install github/gh-models
+# server/.env:
+# GH_CLI_MODE=1
+# LLM_MODEL=gpt-4o-mini
 ```
 
 ### Ollama (lokal, kein Internet)
@@ -179,6 +211,13 @@ ollama pull llama3.2
 # server/.env:
 # OLLAMA_URL=http://localhost:11434
 # OLLAMA_MODEL=llama3.2
+```
+
+### Anthropic
+```bash
+# server/.env:
+# ANTHROPIC_API_KEY=sk-ant-...
+# ANTHROPIC_MODEL=claude-haiku-4-5-20251001
 ```
 
 ### OpenAI
@@ -203,7 +242,7 @@ npm run test:ui
 npm run test:report
 ```
 
-> Beim ersten Ausführen muss Playwright die Browser einmalig herunterladen:  
+> Beim ersten Ausführen muss Playwright die Browser einmalig herunterladen:
 > `npx playwright install --with-deps`
 
 ---
@@ -212,23 +251,31 @@ npm run test:report
 
 ```
 ScrumProject/
-├── client/                  React-Frontend (Vite)
+├── client/                    React-Frontend (Vite)
 │   ├── src/
-│   │   ├── App.jsx          Zweispaltiges Layout + SSE-Feed
-│   │   ├── pages/           ProjectList, FeatureDetail, …
-│   │   └── components/      KanbanBoard, AgentFeed, …
+│   │   ├── App.jsx            Zweispaltiges Layout + SSE-Feed + LLM-Status-Leiste
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx        Projekt-Übersicht
+│   │   │   ├── ProjectDetail.jsx    Features eines Projekts
+│   │   │   └── FeatureDetail.jsx    Stories + Live-Updates via SSE
+│   │   └── components/
+│   │       ├── AgentFeed.jsx        Echtzeit-Ereignisanzeige
+│   │       ├── KanbanBoard.jsx      Kanban mit Drag & Drop
+│   │       └── …
 │   └── .env.example
-├── server/                  Express-Backend (ESM)
-│   ├── server.js            REST-API + SSE-Endpoint
+├── server/                    Express-Backend (ESM)
+│   ├── server.js              REST-API + SSE-Endpoints
 │   ├── agents/
-│   │   ├── agentRunner.js   LLM-Wrapper (GitHub/OpenAI/Ollama)
-│   │   ├── smOrchestrator.js  SM → PO → TPO Workflow
-│   │   └── eventBus.js      SSE-Event-Bus
+│   │   ├── agentRunner.js     LLM-Kette (Ollama → GH CLI → Anthropic → OpenAI)
+│   │   ├── smOrchestrator.js  SM → PO → TPO Workflow mit onProgress-Callback
+│   │   └── eventBus.js        SSE-Event-Bus
 │   └── .env.example
-├── team/                    Agent-Prompt-Dateien (*.Agent.md)
-├── tests/                   Playwright-Tests
-├── install.sh               Installer Linux/macOS
-├── install.ps1              Installer Windows
+├── team/                      Agent-Prompt-Dateien (*.Agent.md)
+├── tests/                     Playwright-Tests
+│   ├── project-creation.spec.js
+│   └── vier-gewinnt.spec.js
+├── install.sh                 Installer Linux/macOS
+├── install.ps1                Installer Windows
 └── playwright.config.js
 ```
 
@@ -239,12 +286,37 @@ ScrumProject/
 Nach dem Anlegen eines Features:
 
 1. **Susi (SM)** liest Feature-Name und -Beschreibung, formuliert eine Direktive an Peter
-2. **Peter (PO)** empfängt die Direktive, generiert 3–6 User Stories als JSON  
+2. **Peter (PO)** empfängt die Direktive, generiert 3–6 User Stories als JSON
    → gespeichert in `<PROJECTS_BASE_DIR>/<projektId>/<featureId>/Userstories.md`
+   → **SSE `feature:update`** — Feature-Detailseite zeigt Stories sofort an
 3. **Tobias (TPO)** liest alle User Stories, erstellt technische Stories (TUS) + `Architecture.md`
-4. Alle Schritte werden über SSE live an den **Agent Feed** im Browser gestreamt
+   → **SSE `feature:update`** — TUS erscheinen live
+4. Für jede Story: **Refinement** durch die zuständigen Entwickler-Agenten
+   → nach jeder Story: **SSE `feature:update`** mit `status: refined`
+5. Alle Agent-Ereignisse laufen parallel über den **Agent Feed** (rechte Spalte)
 
-Jedes Event enthält: `agent`, `agentRole`, `type` (`agent:start` | `agent:done` | `agent:error`), `message`, `timestamp`.
+**SSE-Event-Typen:**
+
+| Typ | Bedeutung |
+|---|---|
+| `agent:start` | Agent beginnt seine Aufgabe |
+| `agent:done` | Agent hat seine Aufgabe abgeschlossen |
+| `agent:error` | Fehler bei einem Agenten |
+| `feature:update` | Stories wurden aktualisiert → UI neu laden |
+
+---
+
+## API-Endpunkte (Auswahl)
+
+| Methode | Pfad | Beschreibung |
+|---|---|---|
+| `GET` | `/api/projects` | Alle Projekte |
+| `POST` | `/api/projects` | Neues Projekt anlegen |
+| `GET` | `/api/projects/:id/features` | Features eines Projekts |
+| `POST` | `/api/projects/:id/features` | Neues Feature → startet Agent-Workflow |
+| `GET` | `/api/projects/:id/features/:fid` | Feature mit Stories |
+| `GET` | `/api/events` | SSE-Stream (Agent Feed + Feature Live-Updates) |
+| `GET` | `/api/llm-status` | Aktives LLM-Backend |
 
 ---
 

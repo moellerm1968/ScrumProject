@@ -52,11 +52,13 @@ export default function ProjectDetail() {
     try {
       if (editingFeature) {
         await api.updateFeature(projectId, editingFeature.id, formData);
+        setShowModal(false);
+        fetchProject();
       } else {
-        await api.createFeature(projectId, formData);
+        const newFeature = await api.createFeature(projectId, formData);
+        setShowModal(false);
+        navigate(`/projects/${projectId}/features/${newFeature.id}`);
       }
-      setShowModal(false);
-      fetchProject();
     } catch (e) {
       alert(e.message);
     }

@@ -81,8 +81,13 @@ $LlmModel = switch ($llmChoice) {
 Write-Ok "Modell: $LlmModel"
 
 Write-Host ""
-$OllamaUrl  = Ask-Secret "Ollama-URL (z.B. http://localhost:11434)"
-$OpenAiKey  = Ask-Secret "OpenAI API Key"
+$OllamaUrl      = Ask-Secret "Ollama-URL (z.B. http://localhost:11434)"
+$GhCliAns       = Ask-Input "GitHub Models CLI nutzen? (gh models run, kostenlos via gh auth) [J/n]" "J"
+$GhCliMode      = -not ($GhCliAns -match '^(n|no|nein)$')
+$OpenAiKey      = Ask-Secret "OpenAI API Key"
+$AnthropicKey   = Ask-Secret "Anthropic API Key (fuer claude-haiku, optional)"
+$LlmDelayMs   = Ask-Input "Pause zwischen LLM-Aufrufen in ms (0 = deaktiviert)" "5000"
+Write-Ok "LLM-Delay: $LlmDelayMs ms"
 
 Write-Host ""
 $DefaultBase     = Join-Path $env:USERPROFILE "ScrumProjects"
@@ -180,10 +185,13 @@ $serverLines = @(
     "CLIENT_PORT=$FrontendPort",
     "",
     "# LLM-Konfiguration",
-    "LLM_MODEL=$LlmModel"
+    "LLM_MODEL=$LlmModel",
+    "LLM_DELAY_MS=$LlmDelayMs"
 )
-if (-not [string]::IsNullOrWhiteSpace($OllamaUrl)) { $serverLines += "OLLAMA_URL=$OllamaUrl" }
-if (-not [string]::IsNullOrWhiteSpace($OpenAiKey)) { $serverLines += "OPENAI_API_KEY=$OpenAiKey" }
+if ($GhCliMode)                                            { $serverLines += "GH_CLI_MODE=1" }
+if (-not [string]::IsNullOrWhiteSpace($OllamaUrl))    { $serverLines += "OLLAMA_URL=$OllamaUrl" }
+if (-not [string]::IsNullOrWhiteSpace($OpenAiKey))    { $serverLines += "OPENAI_API_KEY=$OpenAiKey" }
+if (-not [string]::IsNullOrWhiteSpace($AnthropicKey)) { $serverLines += "ANTHROPIC_API_KEY=$AnthropicKey" }
 
 Set-Content -Path "server\.env" -Value ($serverLines -join "`n") -Encoding UTF8
 Write-Ok "server\.env geschrieben"

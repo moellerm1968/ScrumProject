@@ -50,6 +50,7 @@ export default function FeatureDetail() {
   const [showTusModal, setShowTusModal] = useState(false);
   const [editingTus, setEditingTus] = useState(null);
   const [tusFormData, setTusFormData] = useState(EMPTY_TUS_FORM);
+  const [agentStatus, setAgentStatus] = useState(null); // { agent, agentRole, message }
 
   const fetchData = useCallback(async () => {
     try {
@@ -69,12 +70,24 @@ export default function FeatureDetail() {
     fetchData();
   }, [fetchData]);
 
-  // Poll every 4 s while SM→PO is working
+  // SSE: sofortiger Update sobald der Agent Stories schreibt
   useEffect(() => {
-    if (feature?.storiesStatus !== 'pending') return;
-    const id = setInterval(fetchData, 4000);
-    return () => clearInterval(id);
-  }, [feature?.storiesStatus, fetchData]);
+    const es = new EventSource('/api/events');
+    es.onmessage = (e) => {
+      try {
+        const ev = JSON.parse(e.data);
+        if (ev.projectId !== projectId || ev.featureId !== featureId) return;
+        if (ev.type === 'feature:update') {
+          fetchData();
+        } else if (ev.type === 'agent:start') {
+          setAgentStatus({ agent: ev.agent, agentRole: ev.agentRole, message: ev.message });
+        } else if (ev.type === 'agent:done') {
+          setAgentStatus({ agent: ev.agent, agentRole: ev.agentRole, message: ev.message });
+        }
+      } catch {}
+    };
+    return () => es.close();
+  }, [projectId, featureId, fetchData]);
 
   const handleGenerateStories = async () => {
     try {
@@ -199,6 +212,12 @@ export default function FeatureDetail() {
           {story.storyNumber}
         </span>
       )}
+      {/* Priority badge */}
+      {story.priority && (
+        <span className="inline-block text-xs font-bold bg-orange-100 text-orange-700 rounded px-1.5 py-0.5 mb-1.5 ml-1" title={story.priorityReason || ''}>
+          P{story.priority}
+        </span>
+      )}
       <h4 className="font-semibold text-gray-800 text-sm mb-1 leading-snug">
         {story.title}
       </h4>
@@ -234,7 +253,7 @@ export default function FeatureDetail() {
 
       <div className="flex items-center gap-2 mt-1">
         {story.storyPoints > 0 && (
-          <span className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 rounded px-2 py-0.5 font-semibold">
+          <span className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 rounded px-2 py-0.5 font-semibold" title={story.spConsensus || ''}>
             {story.storyPoints} SP
           </span>
         )}
@@ -242,6 +261,13 @@ export default function FeatureDetail() {
           <span className="text-xs text-gray-300">{story.generatedBy}</span>
         )}
       </div>
+      {Array.isArray(story.tasks) && story.tasks.length > 0 && (
+        <div className="text-xs text-gray-500 bg-gray-50 rounded p-2 mt-1 border border-gray-100">
+          <span className="text-green-600 font-medium">Tasks: </span>
+          {story.tasks[0]}
+          {story.tasks.length > 1 && <span className="text-gray-400"> +{story.tasks.length - 1} weitere</span>}
+        </div>
+      )}
     </div>
   );
 
@@ -256,6 +282,11 @@ export default function FeatureDetail() {
         {tus.component && (
           <span className="inline-block text-xs bg-gray-100 text-gray-600 rounded px-1.5 py-0.5">
             {tus.component}
+          </span>
+        )}
+        {tus.priority && (
+          <span className="inline-block text-xs font-bold bg-orange-100 text-orange-700 rounded px-1.5 py-0.5" title={tus.priorityReason || ''}>
+            P{tus.priority}
           </span>
         )}
       </div>
@@ -281,6 +312,20 @@ export default function FeatureDetail() {
           ))}
         </div>
       )}
+      {tus.storyPoints > 0 && (
+        <div className="flex items-center gap-2 mt-1">
+          <span className="text-xs bg-purple-50 text-purple-600 border border-purple-100 rounded px-2 py-0.5 font-semibold" title={tus.spConsensus || ''}>
+            {tus.storyPoints} SP
+          </span>
+        </div>
+      )}
+      {Array.isArray(tus.tasks) && tus.tasks.length > 0 && (
+        <div className="text-xs text-gray-500 bg-gray-50 rounded p-2 mt-1 border border-gray-100">
+          <span className="text-purple-600 font-medium">Tasks: </span>
+          {tus.tasks[0]}
+          {tus.tasks.length > 1 && <span className="text-gray-400"> +{tus.tasks.length - 1} weitere</span>}
+        </div>
+      )}
     </div>
   );
 
@@ -289,11 +334,9 @@ export default function FeatureDetail() {
     return <div className="py-16 text-center text-red-500">Fehler: {error}</div>;
   if (!project || !feature) return null;
 
-  const totalSP = feature.userStories?.reduce((s, u) => s + (u.storyPoints || 0), 0) ?? 0;
-  const doneSP =
-    feature.userStories
-      ?.filter((u) => u.status === 'done')
-      .reduce((s, u) => s + (u.storyPoints || 0), 0) ?? 0;
+  const allStories = [...(feature.userStories ?? []), ...(feature.technicalStories ?? [])];
+  const totalSP = allStories.reduce((s, u) => s + (u.storyPoints || 0), 0);
+  const doneSP = allStories.filter((u) => u.status === 'done').reduce((s, u) => s + (u.storyPoints || 0), 0);
 
   return (
     <div>
@@ -322,7 +365,7 @@ export default function FeatureDetail() {
           </div>
           <div className="flex flex-col items-end gap-1">
             <div className="flex gap-4 text-sm text-amber-100 font-medium">
-              <span>{feature.userStories?.length ?? 0} Stories</span>
+              <span>{(feature.userStories?.length ?? 0) + (feature.technicalStories?.length ?? 0)} Stories</span>
               <span>Gesamt: {totalSP} SP</span>
               {totalSP > 0 && (
                 <span>Fertig: {doneSP} SP ({Math.round((doneSP / totalSP) * 100)}%)</span>
@@ -344,8 +387,12 @@ export default function FeatureDetail() {
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
           </svg>
           <div>
-            <span className="font-semibold">Susi (SM)</span> koordiniert{' '}
-            <span className="font-semibold">Peter (PO)</span> — User Stories werden generiert…
+            {agentStatus ? (
+              <><span className="font-semibold">{agentStatus.agent} ({agentStatus.agentRole})</span> — {agentStatus.message}</>
+            ) : (
+              <><span className="font-semibold">Susi (SM)</span> koordiniert{' '}
+              <span className="font-semibold">Peter (PO)</span> — User Stories werden generiert…</>
+            )}
           </div>
         </div>
       )}
@@ -375,6 +422,16 @@ export default function FeatureDetail() {
           {feature.architectureFile && (
             <p className="mt-1 text-xs text-blue-500 font-mono">
               🏗️ Architecture.md: {feature.architectureFile}
+            </p>
+          )}
+          {feature.prioritizationFile && (
+            <p className="mt-1 text-xs text-orange-500 font-mono">
+              📊 Priorisierung.md: {feature.prioritizationFile}
+            </p>
+          )}
+          {feature.refinementFile && (
+            <p className="mt-1 text-xs text-teal-500 font-mono">
+              🔧 Refinement.md: {feature.refinementFile}
             </p>
           )}
         </details>
