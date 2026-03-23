@@ -18,17 +18,32 @@ export default function App() {
   const startX = useRef(0);
   const startWidth = useRef(0);
 
-  // Fetch active LLM backend name and poll every 30s (shows cooldown state)
-  useEffect(() => {
-    const fetchStatus = () =>
-      fetch(`http://localhost:${BACKEND_PORT}/api/llm-status`)
-        .then(r => r.json())
-        .then(d => setLlmBackend(d.backend ?? '–'))
-        .catch(() => setLlmBackend('nicht erreichbar'));
-    fetchStatus();
-    const id = setInterval(fetchStatus, 30_000);
-    return () => clearInterval(id);
+  // Fetch active LLM backend name (poll every 10s for countdown display, instant via SSE on switch)
+  const fetchLlmStatus = useCallback(() => {
+    fetch(`http://localhost:${BACKEND_PORT}/api/llm-status`)
+      .then(r => r.json())
+      .then(d => setLlmBackend(d.backend ?? '–'))
+      .catch(() => setLlmBackend('nicht erreichbar'));
   }, []);
+
+  useEffect(() => {
+    fetchLlmStatus();
+    const pollId = setInterval(fetchLlmStatus, 10_000);
+
+    // SSE: sofortiges Update bei Backend-Wechsel (z.B. GitHub → Anthropic-Fallback)
+    const sse = new EventSource(`http://localhost:${BACKEND_PORT}/api/events`);
+    sse.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type === 'llm:backend') fetchLlmStatus();
+      } catch { /* ignore parse errors */ }
+    };
+
+    return () => {
+      clearInterval(pollId);
+      sse.close();
+    };
+  }, [fetchLlmStatus]);
 
   const onDividerMouseDown = useCallback((e) => {
     dragging.current = true;
@@ -96,7 +111,9 @@ export default function App() {
         {/* ── LLM-Status-Zeile ── */}
         <footer className="sticky bottom-0 z-50 bg-gray-800 text-gray-300 text-xs px-4 py-1 flex items-center gap-2 border-t border-gray-700">
           <span className="text-gray-500">🤖 LLM:</span>
-          <span className="font-mono text-green-400">{llmBackend}</span>
+          <span className={`font-mono ${llmBackend.includes('⏸') ? 'text-amber-400' : 'text-green-400'}`}>
+            {llmBackend}
+          </span>
         </footer>
       </div>
     </BrowserRouter>

@@ -25,13 +25,14 @@ export function sseUnsubscribe(id) {
  * Emit an agent activity event to all connected clients.
  *
  * @param {{
- *   type: 'agent:start' | 'agent:done' | 'agent:error',
- *   agent: string,
+ *   type: 'agent:start' | 'agent:done' | 'agent:error' | 'llm:backend',
+ *   agent?: string,
  *   agentRole?: string,
  *   projectName?: string,
  *   featureName?: string,
- *   message: string,
- *   details?: string
+ *   message?: string,
+ *   details?: string,
+ *   backend?: string
  * }} event
  */
 export function emitAgentEvent(event) {

@@ -24,6 +24,7 @@ import { promisify } from 'util';
 import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { emitAgentEvent } from './eventBus.js';
 
 const execFileAsync = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -38,19 +39,30 @@ const OPENAI_URL       = process.env.OPENAI_API_URL     || 'https://api.openai.c
 const LLM_DELAY_MS     = parseInt(process.env.LLM_DELAY_MS ?? '5000', 10);
 
 // ─── GitHub Models Cooldown State ────────────────────────────────────────────
-let ghModelsCooldownUntil = 0; // ms-Timestamp — 0 = kein Cooldown aktiv
+let ghModelsCooldownUntil = 0;    // ms-Timestamp — 0 = kein Cooldown aktiv
+let ghConsecutiveRateLimits = 0;  // Zähler für exponentiellen Backoff
+let _activeBackendId = null;      // null | 'ollama' | 'github' | 'cooldown'
 
 function _setGhModelsCooldown(reason) {
-  ghModelsCooldownUntil = Date.now() + 5 * 60 * 1_000;
-  console.warn(`[GH Models] ⏸ Cooldown 5 min (bis ${new Date(ghModelsCooldownUntil).toLocaleTimeString()}): ${String(reason).slice(0, 200)}`);
+  ghConsecutiveRateLimits++;
+  // Exponentieller Backoff: 5 s, 10 s, 20 s … (max 5 min)
+  const waitMs = Math.min(5_000 * Math.pow(2, ghConsecutiveRateLimits - 1), 300_000);
+  ghModelsCooldownUntil = Date.now() + waitMs;
+  const waitSec = Math.round(waitMs / 1_000);
+  console.warn(`[GH Models] ⏸ Cooldown ${waitSec}s (Hit #${ghConsecutiveRateLimits}, bis ${new Date(ghModelsCooldownUntil).toLocaleTimeString()}): ${String(reason).slice(0, 200)}`);
+  if (_activeBackendId !== 'cooldown') {
+    _activeBackendId = 'cooldown';
+    emitAgentEvent({ type: 'llm:backend', backend: getLLMBackendName() });
+  }
 }
 
 /** Gibt den Namen des aktuell aktiven LLM-Backends zurück (berücksichtigt GitHub-Models-Cooldown). */
 export function getLLMBackendName() {
   if (OLLAMA_URL) return `Ollama (${process.env.OLLAMA_MODEL || 'llama3.2'})`;
   if (Date.now() <= ghModelsCooldownUntil) {
+    const remainSec = Math.ceil((ghModelsCooldownUntil - Date.now()) / 1_000);
     const fallback = ANTHROPIC_KEY ? `Anthropic (${ANTHROPIC_MODEL})` : OPENAI_KEY ? `OpenAI (${LLM_MODEL})` : '–';
-    return `GitHub Models [Cooldown] → ${fallback}`;
+    return `GitHub [⏸ ${remainSec}s] → ${fallback}`;
   }
   return `GitHub Models (${LLM_MODEL})`;
 }
@@ -86,10 +98,11 @@ export async function callLLM({ systemPrompt, userMessage, expectJSON = false })
   // ─── Backend-Kette aufbauen (Priorität 1→4) ──────────────────────────────
   const ghModelsReady = Date.now() > ghModelsCooldownUntil;
   const chain = [
-    OLLAMA_URL    &&  { id: 'ollama',    label: `Ollama (${process.env.OLLAMA_MODEL || 'llama3.2'})`, fn: _ollama,       retry: true  },
-    ghModelsReady && { id: 'github',    label: `GitHub Models (${LLM_MODEL})`,                        fn: _githubModels, retry: true  },
-    ANTHROPIC_KEY && { id: 'anthropic', label: `Anthropic (${ANTHROPIC_MODEL})`,                      fn: _anthropic,    retry: true  },
-    OPENAI_KEY    && { id: 'openai',    label: `OpenAI (${LLM_MODEL})`,                               fn: _openai,       retry: true  },
+    OLLAMA_URL    && { id: 'ollama',    label: `Ollama (${process.env.OLLAMA_MODEL || 'llama3.2'})`, fn: _ollama,       maxRetries: 6 },
+    // GitHub: maxRetries=0 → kein Retry bei 429, sofort Fallback (kein blockierendes Warten)
+    ghModelsReady && { id: 'github',    label: `GitHub Models (${LLM_MODEL})`,                        fn: _githubModels, maxRetries: 0 },
+    ANTHROPIC_KEY && { id: 'anthropic', label: `Anthropic (${ANTHROPIC_MODEL})`,                      fn: _anthropic,    maxRetries: 6 },
+    OPENAI_KEY    && { id: 'openai',    label: `OpenAI (${LLM_MODEL})`,                               fn: _openai,       maxRetries: 6 },
   ].filter(Boolean);
 
   if (chain.length === 0) {
@@ -103,12 +116,18 @@ export async function callLLM({ systemPrompt, userMessage, expectJSON = false })
     console.log(`\n[LLM →] ${backend.label}  expectJSON=${expectJSON}`);
     console.log(`        ${preview}`);
     try {
-      const result = backend.retry
-        ? await _callWithRetry(() => backend.fn(opts))
-        : await backend.fn(opts);
+      const result = await _callWithRetry(() => backend.fn(opts), backend.maxRetries);
 
       const resPreview = result.length > 120 ? result.slice(0, 120) + '…' : result;
       console.log(`[LLM ✓] ${Date.now() - t0} ms  → ${resPreview}`);
+
+      // ── Backend-Wechsel erkennen & per SSE melden ──────────────────────────
+      const newState = backend.id === 'ollama' ? 'ollama' : backend.id === 'github' ? 'github' : 'cooldown';
+      if (newState !== _activeBackendId) {
+        if (backend.id === 'github') ghConsecutiveRateLimits = 0; // Reset nach erfolgreichem GH-Call
+        _activeBackendId = newState;
+        emitAgentEvent({ type: 'llm:backend', backend: getLLMBackendName() });
+      }
 
       if (LLM_DELAY_MS > 0) {
         console.log(`[LLM ⏳] Warte ${LLM_DELAY_MS} ms (LLM_DELAY_MS)`);
@@ -120,8 +139,14 @@ export async function callLLM({ systemPrompt, userMessage, expectJSON = false })
       lastErr = err;
       if (backend.id === 'github') {
         _setGhModelsCooldown(err.message);
-        console.warn('[GH Models] Weiter mit nächstem Backend…');
-        continue; // Fallthrough zu Anthropic / OpenAI
+        console.warn('[GH Models] ⚡ Sofortiger Fallback zu nächstem Backend (kein blockierendes Warten)…');
+        continue; // Sofortiger Fallthrough zu Anthropic / OpenAI
+      }
+      // Für andere Backends: bei 429 weiter zum nächsten Backend, sonst Fehler
+      const is429 = err.message?.includes('429') || err.message?.includes('RateLimitReached');
+      if (is429) {
+        console.warn(`[${backend.label}] Rate-Limit – versuche nächstes Backend…`);
+        continue;
       }
       throw err;
     }
